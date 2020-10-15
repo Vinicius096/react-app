@@ -1,14 +1,19 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { Button, TextField, Switch, FormControlLabel } from "@material-ui/core";
 
-function FormularioCadastro() {
+function FormularioCadastro({onSubmit, validarCPF}) {
 
     const [nome, setNome] = useState("");
     const [sobrenome, setSobrenome] = useState("");
+    const [cpf, setCpf] = useState("");
+    const [promocoes, setPromocoes] = useState(true);
+    const [novidades, setNovidades] = useState(true);
+    const [erros, setErros] = useState({cpf:{valido:true, texto:""}});
 
     return (
         <form onSubmit={(event) => {
             event.preventDefault();
+            onSubmit({nome, sobrenome, cpf, promocoes, novidades})
         }}>
             <TextField
                 value={nome}
@@ -35,8 +40,18 @@ function FormularioCadastro() {
             />
 
             <TextField
-                id="CPF"
+                value={cpf}
+                onChange={(event) => {
+                    setCpf(event.target.value);
+                }}
+                onBlur={(event)=>{
+                    const valido = validarCPF(cpf);
+                    setErros({cpf:valido});
+                }}
+                id="cpf"
                 label="CPF"
+                error={!erros.cpf.valido}
+                helperText={erros.cpf.texto}
                 variant="outlined"
                 margin="normal"
                 fullWidth
@@ -45,14 +60,24 @@ function FormularioCadastro() {
             <FormControlLabel
                 label="Promoções"
                 control={
-                    <Switch name="promocoes" defaultchecked color="primary" />
+                    <Switch name="promocoes"
+                        checked={promocoes}
+                        onChange={(event) => {
+                            setPromocoes(event.target.checked)
+                        }}
+                        color="primary" />
                 }
             />
 
             <FormControlLabel
                 label="Novidades"
                 control={
-                    <Switch name="novidades" defaultchecked color="primary" />
+                    <Switch name="novidades"
+                        checked={novidades}
+                        onChange={(event) => {
+                            setNovidades(event.target.checked)
+                        }}
+                        color="primary" />
                 }
             />
 
